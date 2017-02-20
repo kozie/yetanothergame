@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { assets } from './Assets';
 import Scene from './Scene';
+import Config from './Config';
 
 export default class Game {
     constructor() {
@@ -27,7 +28,7 @@ export default class Game {
         this.stage.scale.x = this.stage.scale.y = 3;
 
         // Load assets and start afterwards
-        const assetsConfig = require('../assets/assets.js');
+        const assetsConfig = new Config(require('../assets/assets.js'));
 
         assets.init(assetsConfig, () => {
             callback.call(this);
@@ -69,6 +70,7 @@ export default class Game {
     }
 
     draw() {
+        debugger;
         this.renderer.render(this.stage);
     }
 }

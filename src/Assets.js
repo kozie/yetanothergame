@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import Config from './Config';
 
 class Assets {
     constructor() {
@@ -7,19 +8,17 @@ class Assets {
     }
 
     init(assets, callback) {
-        if (typeof assets != 'object') {
-            throw new Error('Assets is not an object');
+        if (!assets instanceof Config) {
+            throw new TypeError('Assets is not a Config object');
         }
 
         if (typeof callback != 'function') {
             callback = () => {};
         }
 
-        for (let key in assets) {
-            if (assets.hasOwnProperty(key)) {
-                this.loader.add(key, assets[key]);
-            }
-        }
+        assets.each((value, key) => {
+            this.loader.add(key, value);
+        });
 
         this.loader.load(callback);
     }
