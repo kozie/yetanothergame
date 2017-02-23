@@ -1,5 +1,9 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const extractSass = new ExtractTextPlugin({
+    filename: "[name].[contenthash].css"
+});
 
 module.exports = {
     entry: './src/main.js',
@@ -13,34 +17,39 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['es2015']
+                use: {
+                    loader: 'babel-loader',
+                    query: {
+                        presets: ['es2015']
+                    }
                 }
             },
             {
                 test: /\.json$/,
-                loader: 'json-loader'
+                use: 'json-loader'
             },
             {
                 test: /\.png$/i,
-                loader: 'file-loader',
-                query: {
-                    name: '[name].[ext]?[hash:6]',
-                    publicPath: 'assets/',
-                    outputPath: 'assets/'
+                use: {
+                    loader: 'file-loader',
+                    query: {
+                        name: '[name].[ext]?[hash:6]',
+                        publicPath: 'assets/',
+                        outputPath: 'assets/'
+                    }
                 }
             },
             {
-                test: /\.scss$/,
+                test: /\.scss$/i,
                 exclude: /(node_modules|bower_components)/,
-                use: [{
-                    loader: "style-loader"
-                }, {
-                    loader: "css-loader"
-                }, {
-                    loader: "sass-loader"
-                }]
+                use: extractSass.extract({
+                    use: [{
+                        loader: "css-loader"
+                    }, {
+                        loader: "sass-loader"
+                    }],
+                    fallback: "style-loader"
+                })
             }
         ]
     },
@@ -48,7 +57,8 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: 'src/index.html'
-        })
+        }),
+        extractSass
     ],
     devServer: {
         contentBase: path.join(__dirname, "dist"),
