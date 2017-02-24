@@ -3,9 +3,9 @@ import { assets } from './Assets';
 import Scene from './Scene';
 import Config from './Config';
 
-export default class Game {
+class Game {
     constructor() {
-        this.renderer = PIXI.autoDetectRenderer(640, 480, { antialias: false });
+        this.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { antialias: false });
         this.stage = new PIXI.Container();
 
         // Set empty placeholder
@@ -22,6 +22,9 @@ export default class Game {
         // Add rendering to the actual view
         const root = document.getElementById('root');
         root.appendChild(this.renderer.view);
+
+        // Keep track of the window size
+        window.addEventListener('resize', this._onResize.bind(this));
 
         // Set correct scaling settings
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
@@ -70,7 +73,13 @@ export default class Game {
     }
 
     draw() {
-        debugger;
         this.renderer.render(this.stage);
     }
+
+    _onResize(event) {
+        this.renderer.width = window.innerWidth;
+        this.renderer.height = window.innerHeight;
+    }
 }
+
+export const game = new Game();
