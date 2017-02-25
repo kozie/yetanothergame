@@ -5,9 +5,6 @@ export default class Scene {
         // Set empty placeholder
         this.entities = [];
         this.stage = null;
-
-        // Initialize now
-        this.init();
     }
 
     init() {
@@ -20,6 +17,9 @@ export default class Scene {
 
         // Add entity
         this.entities.push(entity);
+
+        // Run the onScene event
+        entity.onScene(this);
     }
 
     update(delta) {
@@ -30,7 +30,7 @@ export default class Scene {
 
     draw() {
         this.entities.forEach((e) => {
-            e.draw(this.stage);
+            e.draw();
         });
     }
 }

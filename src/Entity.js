@@ -6,7 +6,6 @@ export default class Entity {
         this.location = (x instanceof PIXI.Point) ? x : new PIXI.Point(x, y);
         
         // Set empty placeholders
-        this.texture = null;
         this.parent = null;
 
         this.init();
@@ -21,6 +20,10 @@ export default class Entity {
     }
 
     draw(stage) {
+        // ..
+    }
+
+    onScene() {
         // ..
     }
 }

@@ -30,6 +30,16 @@ class Assets {
 
         return null;
     }
+
+    getTexture(name) {
+        const asset = this.getAsset(name);
+
+        if (asset && typeof asset.texture != 'undefined') {
+            return asset.texture;
+        }
+
+        return null;
+    }
 }
 
 // Singleton

@@ -56,9 +56,12 @@ class Game {
         this.scene.update(delta);
 
         // Now draw
-        this.stage.removeChildren();
-        this.scene.draw();
         this.draw();
+    }
+
+    draw() {
+        this.scene.draw();
+        this.renderer.render(this.stage);
     }
 
     get scene() {
@@ -69,11 +72,11 @@ class Game {
         // Set scene stage first
         scene.stage = this.stage;
 
+        // Add the scene
         this._scene = scene;
-    }
 
-    draw() {
-        this.renderer.render(this.stage);
+        // Initialize the scene
+        this._scene.init();
     }
 
     _onResize(event) {

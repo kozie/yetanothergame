@@ -5,10 +5,17 @@ import { assets } from '../Assets';
 export default class TestEntity extends Entity {
     constructor(x, y) {
         super(x, y);
-
-        this.sprite = new PIXI.Sprite(assets.getAsset('test').texture);
+        
         this.speed = 2;
         this.vx = this.vy = this.speed;
+    }
+
+    init() {
+        this.sprite = new PIXI.Sprite(assets.getTexture('test'));
+    }
+
+    onScene(scene) {
+        scene.stage.addChild(this.sprite);
     }
 
     update(delta) {
@@ -27,12 +34,11 @@ export default class TestEntity extends Entity {
         } else if ((this.location.x + this.sprite.width) * game.stage.scale.x >= game.renderer.width) {
             this.vx = -this.speed;
         }
+
     }
 
-    draw(stage) {
+    draw() {
         this.sprite.x = this.location.x;
         this.sprite.y = this.location.y;
-
-        stage.addChild(this.sprite);
     }
 }
