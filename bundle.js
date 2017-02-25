@@ -10648,13 +10648,12 @@ var Game = function () {
             this.scene.update(delta);
 
             // Now draw
-            this.stage.removeChildren();
-            this.scene.draw();
             this.draw();
         }
     }, {
         key: 'draw',
         value: function draw() {
+            this.scene.draw();
             this.renderer.render(this.stage);
         }
     }, {
@@ -10672,7 +10671,11 @@ var Game = function () {
             // Set scene stage first
             scene.stage = this.stage;
 
+            // Add the scene
             this._scene = scene;
+
+            // Initialize the scene
+            this._scene.init();
         }
     }]);
 
@@ -10741,6 +10744,17 @@ var Assets = function () {
         value: function getAsset(name) {
             if (typeof this.assets[name] != 'undefined') {
                 return this.assets[name];
+            }
+
+            return null;
+        }
+    }, {
+        key: 'getTexture',
+        value: function getTexture(name) {
+            var asset = this.getAsset(name);
+
+            if (asset && typeof asset.texture != 'undefined') {
+                return asset.texture;
             }
 
             return null;
@@ -10834,9 +10848,6 @@ var Scene = function () {
         // Set empty placeholder
         this.entities = [];
         this.stage = null;
-
-        // Initialize now
-        this.init();
     }
 
     _createClass(Scene, [{
@@ -10852,6 +10863,9 @@ var Scene = function () {
 
             // Add entity
             this.entities.push(entity);
+
+            // Run the onScene event
+            entity.onScene(this);
         }
     }, {
         key: 'update',
@@ -10863,10 +10877,8 @@ var Scene = function () {
     }, {
         key: 'draw',
         value: function draw() {
-            var _this = this;
-
             this.entities.forEach(function (e) {
-                e.draw(_this.stage);
+                e.draw();
             });
         }
     }]);
@@ -18716,7 +18728,6 @@ var Entity = function () {
         this.location = x instanceof PIXI.Point ? x : new PIXI.Point(x, y);
 
         // Set empty placeholders
-        this.texture = null;
         this.parent = null;
 
         this.init();
@@ -18735,6 +18746,11 @@ var Entity = function () {
     }, {
         key: 'draw',
         value: function draw(stage) {
+            // ..
+        }
+    }, {
+        key: 'onScene',
+        value: function onScene() {
             // ..
         }
     }]);
@@ -18781,13 +18797,22 @@ var TestEntity = function (_Entity) {
 
         var _this = _possibleConstructorReturn(this, (TestEntity.__proto__ || Object.getPrototypeOf(TestEntity)).call(this, x, y));
 
-        _this.sprite = new PIXI.Sprite(_Assets.assets.getAsset('test').texture);
         _this.speed = 2;
         _this.vx = _this.vy = _this.speed;
         return _this;
     }
 
     _createClass(TestEntity, [{
+        key: 'init',
+        value: function init() {
+            this.sprite = new PIXI.Sprite(_Assets.assets.getTexture('test'));
+        }
+    }, {
+        key: 'onScene',
+        value: function onScene(scene) {
+            scene.stage.addChild(this.sprite);
+        }
+    }, {
         key: 'update',
         value: function update(delta) {
             this.location.x += this.vx;
@@ -18808,11 +18833,9 @@ var TestEntity = function (_Entity) {
         }
     }, {
         key: 'draw',
-        value: function draw(stage) {
+        value: function draw() {
             this.sprite.x = this.location.x;
             this.sprite.y = this.location.y;
-
-            stage.addChild(this.sprite);
         }
     }]);
 
